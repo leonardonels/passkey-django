@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from media.models import image_link
 from django.contrib.auth.forms import UserCreationForm
@@ -8,7 +8,12 @@ def home(request):
     images = image_link.objects.all()
     return render(request, 'home.html', {'images': images})
 
-class UserCreateView(CreateView):
-    form_class=UserCreationForm
-    template_name="user_create.html"
-    succesfull_urls=reverse_lazy("login")
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+    return render(request, 'signup.html', {'form': form})
