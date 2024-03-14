@@ -1,0 +1,14 @@
+{% extends 'masonry.html' %}
+
+{% block title %}Create{% endblock %}
+
+{% block content %}
+  <div class="col-md-6">
+    <h2>Create</h2>
+    <form method="post" class="form">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">save</button>
+    </form>
+  </div>
+{% endblock %}

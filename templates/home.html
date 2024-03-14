@@ -3,7 +3,23 @@
 {% block title%} Home {% endblock %}
 
 {% block content %}
-    <div class="col-sm-6 col-lg-4 mb-4" style="position: absolute; left: 0%; top: 0px;">
+  <div class="row">
+    {% for image in images %}
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <img class='rounded' src="{{ image.link }}"  alt="{{ image.title }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ image.title }}</h5>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endblock %}
+
+
+<!--
+  <div class="col-sm-6 col-lg-4 mb-4" style="position: absolute; left: 0%; top: 0px;">
         <div class="card">
             <img class="rounded" src="https://res.cloudinary.com/duvnvg6ld/image/upload/v1674196775/2022/amatrice/IMG_2386_q5dhsg.jpg" width="100%">
             <div class="card-body">
@@ -82,4 +98,4 @@
         </div>
       </div>
     
-      {% endblock %}
+-->

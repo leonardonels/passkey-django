@@ -1,0 +1,16 @@
+{% extends 'masonry.html' %}
+
+{% block title%} Register {% endblock %}
+
+{% block content %}
+
+<div class="col-md-6">
+    <h2>Register</h2>
+    <form method="post" class="form">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">save</button>
+    </form>
+  </div>
+
+{% endblock %}
