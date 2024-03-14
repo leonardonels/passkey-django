@@ -1,0 +1,24 @@
+{% extends "masonry.html" %}
+
+{% block title %}Portfolio{% endblock %}
+
+{% block content %}
+    <h1>Portfolio</h1>
+    <div class="row">
+        {% if images %}
+            {% for image in images %}
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <img src="{{ image.link }}" class="card-img-top" alt="{{ image.title }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ image.title }}</h5>
+                            <p class="card-text">Uploaded by: {{ image.user.username }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No images found in your portfolio.</p>
+        {% endif %}
+    </div>
+{% endblock %}

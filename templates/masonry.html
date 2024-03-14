@@ -22,13 +22,13 @@
           <div class="collapse navbar-collapse" id="collapsibleNavbar">
             <ul class="navbar-nav">
               <li class="nav-item">
-                <a class="nav-link" href="#">search</a>
+                <a class="nav-link" href="/media/search">search</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/media/create">create</a>
+                <a class="nav-link" href="/media/upload">upload</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">portfolio</a>
+                <a class="nav-link" href="/media/portfolio">portfolio</a>
               </li>   
               <li class="nav-item">
                 <a class="nav-link" href="#">chat</a>
@@ -37,7 +37,7 @@
             <ul class="navbar-nav ms-auto">
               {% if user.is_authenticated %}
                   <li class="nav-item">
-                      <a class="nav-link" href="#">{{ user.username }}</a>
+                    <a class="nav-link" href="/media/profile">{{ user.username }}</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">logout</a>

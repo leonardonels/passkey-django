@@ -1,7 +1,7 @@
 from django import forms
 from .models import image_link
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 
 class ImageForm(forms.ModelForm):
     class Meta:
@@ -14,3 +14,8 @@ class Registration(UserCreationForm):
         g=Group.object.get(name="user")
         g.user_set.add(user)
         return user
+    
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name']
