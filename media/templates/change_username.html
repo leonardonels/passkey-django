@@ -1,0 +1,13 @@
+{% extends 'masonry.html' %}
+
+{% block title%} Change Username {% endblock %}
+
+{% block content %}
+<h2>Change Username</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.username.label_tag }}
+    {{ form.username }}
+    <button type="submit" class="btn btn-primary">Change Username</button>
+</form>
+{% endblock %}

@@ -1,83 +1,28 @@
-{% extends "masonry.html" %}
+{% extends 'masonry.html' %}
+
+{% block title%} Profile {% endblock %}
 
 {% block content %}
-        <div class="container">
+<div class container>
 
-        <!-- Profile details -->
-        <h2>Profile</h2>
-        <p>Welcome, {{ user.username }}!</p>
-        
-        <!-- Button to change username -->
-        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#changeUsernameModal">
-            Change Username
-        </button>
+<h2>User Profile</h2>
+<a href="/media/profile/change_username/" class="btn btn-primary">Change Username</a>
 
-        <!-- Button to change password -->
-        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
-            Change Paswword
-        </button>
+<a href="/media/profile/change_password/" class="btn btn-primary">Change Password</a>
 
-        <!-- Delete account button -->
-        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
-            Delete Account
-        </button>
+<a href="/media/profile/delete/" class="btn btn-danger">Delete Account</a>
 
-    </div>
+</div>
+{% endblock %}
 
-    <!-- Modal for username changes -->
-    <div class="modal fade" id="changeUsernameModal" tabindex="-1" aria-labelledby="changeUsernameModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="changeUsernameModalLabel">Change Username</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" action="/media/change_username/">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="newUsername" class="form-label">New Username</label>
-                            <input type="text" class="form-control" id="newUsername" name="new_username" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Modal for password changes -->
-    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" action="/media/change_password/">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="currentPassword" class="form-label">Current Password</label>
-                            <input type="password" class="form-control" id="currentPassword" name="current_password" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="newPassword" class="form-label">New Password</label>
-                            <input type="password" class="form-control" id="newPassword" name="new_password1" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                            <input type="password" class="form-control" id="confirmPassword" name="new_password2" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Modal for delete confirmation -->
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+
+<!--
+
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
+    Delete Account
+</button>
+
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -97,4 +42,5 @@
         </div>
       </div>
     </div>
-{% endblock %}
+
+-->

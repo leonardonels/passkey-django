@@ -53,35 +53,32 @@ def profile(request):
     return render(request, 'profile.html', {'form': form})
 
 @login_required
-def delete_account(request):
-    if request.method == 'POST':
-        # Delete the user account
-        request.user.delete()
-        messages.success(request, 'Your account has been successfully deleted.')
-        return redirect('home')  # Redirect to home page or any other appropriate page
-    else:
-        return render(request, 'delete.html')
-    
-@login_required
-def change_username(request):
-    if request.method == 'POST':
-        new_username = request.POST.get('new_username')
-        request.user.username = new_username
-        request.user.save()
-        return redirect('/media/profile')  # Redirect to profile page after changing username
-    return render(request, 'profile.html')
-
-@login_required
 def change_password(request):
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            new_password = form.cleaned_data['new_password1']
-            user.set_password(new_password)
-            user.save()
-            update_session_auth_hash(request, user)  # Keep the user logged in after changing the password
-            return redirect('/media/profile')  # Redirect to profile page after changing password
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important to keep the user logged in
+            return redirect('/media/profile')
     else:
         form = PasswordChangeForm(request.user)
-    return render(request, 'profile.html', {'form': form})
+    return render(request, 'change_password.html', {'form': form})
+
+@login_required
+def change_username(request):
+    if request.method == 'POST':
+        form = UsernameChangeForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('/media/profile')
+    else:
+        form = UsernameChangeForm(instance=request.user, data={'username': request.user.username})
+    return render(request, 'change_username.html', {'form': form})
+
+def delete_account(request):
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        if request.user.check_password(password):
+            request.user.delete()
+            return redirect('home')
+    return render(request, 'delete.html')

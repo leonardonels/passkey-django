@@ -19,3 +19,8 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'first_name', 'last_name']
+
+class UsernameChangeForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username']
