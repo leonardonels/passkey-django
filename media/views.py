@@ -82,3 +82,21 @@ def delete_account(request):
             request.user.delete()
             return redirect('home')
     return render(request, 'delete.html')
+
+def edit_image(request, image_id):
+    image = get_object_or_404(image_link, id=image_id)
+    if request.method == 'POST':
+        form = ImageForm(request.POST, instance=image)
+        if form.is_valid():
+            form.save()
+            return redirect('/media/portfolio')
+    else:
+        form = ImageForm(instance=image)
+    return render(request, 'edit.html', {'form': form, 'image': image})
+
+def delete_image(request, image_id):
+    image = get_object_or_404(image_link, id=image_id)
+    if request.method == 'POST':
+        image.delete()
+        return redirect('/media/portfolio')
+    return render(request, 'delete_image.html', {'image': image})

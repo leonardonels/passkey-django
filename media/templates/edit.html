@@ -1,0 +1,50 @@
+{% extends "masonry.html" %}
+
+{% block title %}Edit Image{% endblock %}
+
+{% block content %}
+<div class="container">
+<h1>Edit Image</h1>
+<img src="{{ image.link }}" alt="{{ image.title }}" class="img-fluid mb-3" style="max-width: 300px;">
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+</div>
+<div>
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
+    Delete
+  </button>
+</div>
+
+  <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Delete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete this image?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <form id="deleteForm" action="/media/portfolio/edit/delete/{{image.id}}/" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+{% endblock %}
+
+<!-- Script per gestire l'evento di chiusura del modal -->
+<script>
+    // Aggiungi un ascoltatore per l'evento di chiusura del modal
+    document.getElementById('confirmDeleteModal').addEventListener('hidden.bs.modal', function () {
+      // Non è necessario eseguire alcuna azione quando il modal viene chiuso
+    });
+  </script>
