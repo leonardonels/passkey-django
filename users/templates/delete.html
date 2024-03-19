@@ -5,6 +5,7 @@
 {% block content %}
 <h2>Delete Account</h2>
 <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+<p class="text-danger">{{ message }}</p>
 <form method="post">
     {% csrf_token %}
     <input type="password" name="password" placeholder="Enter your password">

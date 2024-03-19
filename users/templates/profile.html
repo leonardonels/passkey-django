@@ -5,12 +5,13 @@
 {% block content %}
 <div class="container">
     <h2>User Profile</h2>
+    <p>Welcome {{user.username}}</p><br>
 
     <div class="d-flex justify-content-between">
         <div>
-            <a href="/media/profile/change_username/" class="btn btn-primary">Change Username</a>
-            <a href="/media/profile/change_password/" class="btn btn-primary">Change Password</a>
-            <a href="/media/profile/delete/" class="btn btn-danger">Delete Account</a>
+            <a href="/users/profile/change_username/" class="btn btn-primary">Change Username</a>
+            <a href="/users/profile/change_password/" class="btn btn-primary">Change Password</a>
+            <a href="/users/profile/delete/" class="btn btn-danger">Delete Account</a>
         </div>
         <div>
             {% if request.user.is_superuser %}
