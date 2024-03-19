@@ -1,8 +1,8 @@
 from django.db import models
-from django.contrib.auth.models import User
+from users.models import User
 
 class image_link(models.Model):
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=25)
     link = models.URLField()
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="images")
 
