@@ -6,9 +6,9 @@
 
 <div class='container'>
     <h2>Setup one-time password</h2>
-    {% if otp_uri %}
+    {% if qr_base64 %}
     <p>Scan the QR code below with Google Authenticator or a similar app:</p>
-    <img src="data:image/png;base64,{{ otp_uri }}" alt="QR Code">
+    <img src="data:image/png;base64,{{ qr_base64 }}" alt="QR Code">
     <p>Alternatively, you can manually enter the following secret key:</p>
     <p><strong>Secret Key:</strong> {{ user.otp_secret }}</p>
     <p>Make sure to store this secret key securely.</p>

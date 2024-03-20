@@ -3,8 +3,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
+from io import BytesIO
 from .forms import *
 from .models import User
+import pyotp, base64, qrcode
 
 # Create your views here.
 
@@ -60,4 +62,29 @@ def toggle_otp(request):
         user = request.user
         if user:
             user.toggle_otp()
-    return redirect('users:profile')
+    return redirect('/users/profile')
+
+@login_required
+def setup_otp(request):
+    user = request.user
+    if request.method == 'POST':
+        if user:
+            user.toggle_otp()
+            # QR code
+            totp = pyotp.TOTP(user.otp_secret)
+            otp_uri = totp.provisioning_uri(user.username, issuer_name="Django RAW")
+            qr = qrcode.make(otp_uri)
+            
+            # save QR in a buffer
+            buffer = BytesIO()
+            qr.save(buffer)
+            
+            # base64 base64 encoding of QR image
+            qr_base64 = base64.b64encode(buffer.getvalue()).decode()
+            
+            return render(request, 'setup_otp.html', {'qr_base64': qr_base64})
+        else:
+            print("non user")
+    else:
+        print("non post")
+    return render(request, 'setup_otp.html')

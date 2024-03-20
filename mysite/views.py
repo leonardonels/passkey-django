@@ -31,7 +31,7 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             if user.otp:
-                send_otp(request)
+                #send_otp(request)
                 request.session['username']=username
                 return redirect('otp')
             else:
@@ -46,43 +46,19 @@ def logout_view(request):
     return redirect('home')
 
 def otp(request):
-    error_message=None
-    if request.method == 'POST':
-        otp = request.POST['otp']
-        username = request.session['username'] 
+        error_message=None
+        username = request.session['username']
+        user=get_object_or_404(User, username=username)
+        secret=user.otp_secret
+        totp=pyotp.TOTP(secret)
+        print("Current OTP:", totp.now())
 
-        otp_secret_key = request.session['otp_secret_key']
-        otp_valid_date = request.session['otp_valid_date']
-
-        if otp_secret_key and otp_valid_date is not None:
-            valid_date=datetime.fromisoformat(otp_valid_date)
-
-            if valid_date > datetime.now():
-                 totp = pyotp.TOTP(otp_secret_key, interval=60)
-
-                 if totp.verify(otp):
-                    user=get_object_or_404(User, username=username)
-                    login(request, user)
-
-                    del request.session['otp_secret_key']
-                    del request.session['otp_valid_date']
-
-                    return redirect('home')
-                 else:
-                     error_message="invalid one time password"
+        if request.method == 'POST':
+            otp=request.POST['otp']
+            print(otp)
+            if totp.verify(otp):
+                login(request, user)
+                return redirect('home')
             else:
-                error_message="one time password has expired"
-        else:
-            error_message="ops...something went wrong :("
-     
-    return render(request, 'otp.html', {'error_message':error_message})
-
-#TOTP or Time based One Time Password
-def send_otp(request):
-    totp=pyotp.TOTP(pyotp.random_base32(), interval=60)
-    otp=totp.now()
-    request.session['otp_secret_key'] = totp.secret
-    valid_date=datetime.now() + timedelta(minutes=1)
-    request.session['otp_valid_date']=str(valid_date)
-
-    print(f"Your one time password is {otp}")
+                error_message="invalid one time password"
+        return render(request, 'otp.html', {'error_message':error_message})

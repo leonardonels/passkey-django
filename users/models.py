@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+import pyotp
 
 # Create your models here.
 
@@ -12,8 +13,8 @@ class User(AbstractUser):
     base_role=Role.ADMIN
 
     role=models.CharField(max_length=50,choices=Role.choices)
-
     otp = models.BooleanField(default=False)
+    otp_secret = models.CharField(max_length=32, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -38,6 +39,10 @@ class User(AbstractUser):
             self.remove_otp()
         else:
             self.add_otp()
+        self.save()
+
+    def set_secret(self):
+        self.otp_secret=pyotp.random_base32()
         self.save()
         
 class NormalUser(User):
