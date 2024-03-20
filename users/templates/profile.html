@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container">
     <h2>User Profile</h2>
-    <p>Welcome {{user.username}}</p><br>
+    <p>Welcome {{ user.username }}</p><br>
 
     <div class="d-flex justify-content-between">
         <div>
@@ -19,5 +19,17 @@
             {% endif %}
         </div>
     </div>
+
+    <div class="mt-3">
+        <form action="{% url 'users:toggle_otp' %}" method="post" class="mt-3">
+            {% csrf_token %}
+            <button type="submit" class="btn {% if user.otp %}btn-warning{% else %}btn-success{% endif %}">
+                {% if user.otp %}
+                    Disable OTP
+                {% else %}
+                    Enable OTP
+                {% endif %}
+            </button>
+        </form>
 </div>
 {% endblock %}

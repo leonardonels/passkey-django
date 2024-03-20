@@ -13,6 +13,8 @@ class User(AbstractUser):
 
     role=models.CharField(max_length=50,choices=Role.choices)
 
+    otp = models.BooleanField(default=False)
+
     def save(self, *args, **kwargs):
         if not self.pk:
             self.role=self.base_role
@@ -24,6 +26,19 @@ class User(AbstractUser):
     @property
     def is_admin(self):
         return self.is_superuser_custom()
+    
+    def add_otp(self):
+        self.otp = True
+    
+    def remove_otp(self):
+        self.otp = False
+
+    def toggle_otp(self):
+        if self.otp:
+            self.remove_otp()
+        else:
+            self.add_otp()
+        self.save()
         
 class NormalUser(User):
 

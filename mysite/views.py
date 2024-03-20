@@ -31,14 +31,13 @@ def login_view(request):
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            #send one time password
-            #...
-            send_otp(request)
-            request.session['username']=username
-            return redirect('otp')
-            
-            #login(request, user)
-            #return redirect('home')
+            if user.otp:
+                send_otp(request)
+                request.session['username']=username
+                return redirect('otp')
+            else:
+                login(request, user)
+                return redirect('home')
         else:
             error_message = 'invalid username or password'
     return render(request, 'login.html', {'error_message':error_message})
