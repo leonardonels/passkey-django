@@ -1,0 +1,20 @@
+{% extends 'masonry.html' %}
+
+{% block title %}Setup OTP{% endblock %}
+
+{% block content %}
+
+<div class='container'>
+    <h2>Setup one-time password</h2>
+    {% if otp_uri %}
+    <p>Scan the QR code below with Google Authenticator or a similar app:</p>
+    <img src="data:image/png;base64,{{ otp_uri }}" alt="QR Code">
+    <p>Alternatively, you can manually enter the following secret key:</p>
+    <p><strong>Secret Key:</strong> {{ user.otp_secret }}</p>
+    <p>Make sure to store this secret key securely.</p>
+{% else %}
+    <p>Unable to generate QR code.</p>
+{% endif %}
+</div>
+
+{% endblock %}
