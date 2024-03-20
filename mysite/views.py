@@ -77,6 +77,7 @@ def otp(request):
      
     return render(request, 'otp.html', {'error_message':error_message})
 
+#TOTP or Time based One Time Password
 def send_otp(request):
     totp=pyotp.TOTP(pyotp.random_base32(), interval=60)
     otp=totp.now()
