@@ -3,8 +3,7 @@ from django.urls import reverse_lazy
 from media.models import image_link
 from users.forms import RegistrationForm
 from django.contrib.auth import login, logout, authenticate
-from .utils import send_otp
-from datetime import datetime
+from datetime import datetime, timedelta
 from users.models import User 
 import pyotp
 
@@ -42,6 +41,10 @@ def login_view(request):
             error_message = 'invalid username or password'
     return render(request, 'login.html', {'error_message':error_message})
 
+def logout_view(request):
+    logout(request)
+    return redirect('home')
+
 def otp(request):
     error_message=None
     if request.method == 'POST':
@@ -73,3 +76,12 @@ def otp(request):
             error_message="ops...something went wrong :("
      
     return render(request, 'otp.html', {'error_message':error_message})
+
+def send_otp(request):
+    totp=pyotp.TOTP(pyotp.random_base32(), interval=60)
+    otp=totp.now()
+    request.session['otp_secret_key'] = totp.secret
+    valid_date=datetime.now() + timedelta(minutes=1)
+    request.session['otp_valid_date']=str(valid_date)
+
+    print(f"Your one time password is {otp}")

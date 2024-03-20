@@ -27,5 +27,5 @@ urlpatterns = [
     path('signup/', signup, name='signup'),
     path('login/', login_view, name='login'),
     path('otp/', otp, name='otp'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('logout/', logout_view, name='logout'),
 ]
