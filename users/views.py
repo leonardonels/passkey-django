@@ -70,6 +70,7 @@ def setup_otp(request):
     if request.method == 'POST':
         if user:
             user.toggle_otp()
+            user.set_secret()
             # QR code
             totp = pyotp.TOTP(user.otp_secret)
             otp_uri = totp.provisioning_uri(user.username, issuer_name="Django RAW")
