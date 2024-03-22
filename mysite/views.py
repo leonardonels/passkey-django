@@ -5,7 +5,7 @@ from users.forms import RegistrationForm
 from django.contrib.auth import login, logout, authenticate
 from datetime import datetime, timedelta
 from users.models import User 
-import pyotp
+import pyotp, base64
 
 def home(request):
     images = image_link.objects.all()
@@ -49,7 +49,7 @@ def otp(request):
         error_message=None
         username = request.session['username']
         user=get_object_or_404(User, username=username)
-        secret=user.otp_secret
+        secret=user.decrypt_otp_secret(user.otp_secret)
         totp=pyotp.TOTP(secret)
         print("Current OTP:", totp.now())
 

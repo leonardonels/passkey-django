@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-import pyotp
+from cryptography.fernet import Fernet
+from django.utils.encoding import force_bytes
+from mysite.settings import SECRET_KEY
+import pyotp,base64
 
 # Create your models here.
 
@@ -14,7 +17,7 @@ class User(AbstractUser):
 
     role=models.CharField(max_length=50,choices=Role.choices)
     otp = models.BooleanField(default=False)
-    otp_secret = models.CharField(max_length=32, blank=True)
+    otp_secret = models.CharField(max_length=200, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -42,8 +45,22 @@ class User(AbstractUser):
         self.save()
 
     def set_secret(self):
-        self.otp_secret=pyotp.random_base32()
+        otp_secret=pyotp.random_base32()
+        fernet_otp_secret=self.encrypt_otp_secret(otp_secret)
+        self.otp_secret=fernet_otp_secret.decode('utf-8')
         self.save()
+
+    def encrypt_otp_secret(self, otp_secret):
+        key=force_bytes(SECRET_KEY)[:32]
+        fernet=Fernet(base64.b64encode(key))
+        token=fernet.encrypt(otp_secret.encode('utf-8'))
+        return token
+
+    def decrypt_otp_secret(self, token):
+        key=force_bytes(SECRET_KEY)[:32]
+        fernet=Fernet(base64.b64encode(key))
+        otp_secret=fernet.decrypt(token.encode('utf-8')).decode('utf-8')
+        return otp_secret
         
 class NormalUser(User):
 

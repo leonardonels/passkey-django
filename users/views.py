@@ -72,7 +72,7 @@ def setup_otp(request):
             user.toggle_otp()
             user.set_secret()
             # QR code
-            totp = pyotp.TOTP(user.otp_secret)
+            totp = pyotp.TOTP(user.decrypt_otp_secret(user.otp_secret))
             otp_uri = totp.provisioning_uri(user.username, issuer_name="Django RAW")
             qr = qrcode.make(otp_uri)
             
@@ -83,7 +83,7 @@ def setup_otp(request):
             # base64 base64 encoding of QR image
             qr_base64 = base64.b64encode(buffer.getvalue()).decode()
             
-            return render(request, 'setup_otp.html', {'qr_base64': qr_base64})
+            return render(request, 'setup_otp.html', {'qr_base64': qr_base64, 'otp_secret': user.decrypt_otp_secret(user.otp_secret)})
         else:
             print("non user")
     else:
