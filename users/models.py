@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from cryptography.fernet import Fernet
 from django.utils.encoding import force_bytes
 from mysite.settings import SECRET_KEY
-import pyotp,base64
+import pyotp,base64, random
 
 # Create your models here.
 
@@ -18,6 +18,7 @@ class User(AbstractUser):
     role=models.CharField(max_length=50,choices=Role.choices)
     otp = models.BooleanField(default=False)
     otp_secret = models.CharField(max_length=200, blank=True)
+    backup_codes = models.CharField(max_length=200, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -61,7 +62,31 @@ class User(AbstractUser):
         fernet=Fernet(base64.b64encode(key))
         otp_secret=fernet.decrypt(token.encode('utf-8')).decode('utf-8')
         return otp_secret
-        
+    
+    def generate_backup_codes(self):
+        backup_codes = []
+        for _ in range(10):
+            backup_code = ''.join(random.choices('0123456789', k=6))
+            backup_codes.append(backup_code)
+        print(backup_codes)
+        self.encrypt_backup_codes(backup_codes)
+
+    def encrypt_backup_codes(self, backup_codes):
+        key=force_bytes(SECRET_KEY)[:32]
+        fernet=Fernet(base64.b64encode(key))
+        token=fernet.encrypt(','.join(backup_codes).encode('utf-8')).decode('utf-8')
+        print(token)
+        self.backup_codes=token
+        self.save()
+
+    def decrypt_backup_codes(self, token):
+        key=force_bytes(SECRET_KEY)[:32]
+        fernet=Fernet(base64.b64encode(key))
+        token=token.encode('utf-8')
+        decrypted_codes = fernet.decrypt(token).decode().split(',')
+        print(decrypted_codes)
+        return decrypted_codes
+            
 class NormalUser(User):
 
     base_role=User.Role.USER

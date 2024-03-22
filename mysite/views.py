@@ -56,9 +56,17 @@ def otp(request):
         if request.method == 'POST':
             otp=request.POST['otp']
             print(otp)
+            print(user.backup_codes)
             if totp.verify(otp):
                 login(request, user)
                 return redirect('home')
             else:
-                error_message="invalid one time password"
+                backup_codes=user.decrypt_backup_codes(user.backup_codes)
+                if otp in backup_codes:
+                    backup_codes.remove(otp)
+                    user.encrypt_backup_codes(backup_codes)
+                    login(request, user)
+                    return redirect('home')
+                else:
+                    error_message="invalid one time password"
         return render(request, 'otp.html', {'error_message':error_message})
