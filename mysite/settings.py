@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'media',
     'users',
     'sslserver',
+    'web_auth',
+    'rest_framework',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -138,3 +140,8 @@ AUTH_USER_MODEL = "users.User"
 
 STATIC_ROOT=(os.path.join(BASE_DIR,'static'))
 #STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
+
+
+REPLYING_PARTY_ID = "localhost"
+ORIGIN = "http://localhost:8000"
+REPLYING_PARY_NAME = "mysite"
