@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from users.models import User
 from webauthn import generate_registration_options, verify_registration_response
 from webauthn.helpers.structs import AttestationConveyancePreference, RegistrationCredential
@@ -74,3 +74,7 @@ def registration_verification(request):
     )
 
     return JsonResponse({"verified":True})
+
+def remove_passkey(request):
+    Credential.objects.filter(user=request.user).delete()
+    return redirect('/users/profile')

@@ -7,12 +7,14 @@ from io import BytesIO
 from .forms import *
 from .models import User
 import pyotp, base64, qrcode
+from web_auth.models import Credential
 
 # Create your views here.
 
 @login_required
 def profile(request):
     user = request.user
+    passkey_exists = Credential.objects.filter(user_id=user.id).exists()
     if request.method == 'POST':
         form = UserProfileForm(request.POST, instance=user)
         if form.is_valid():
@@ -20,7 +22,7 @@ def profile(request):
             return redirect('profile')
     else:
         form = UserProfileForm(instance=user)
-    return render(request, 'profile.html', {'form': form})
+    return render(request, 'profile.html', {'form': form, 'passkey_exists': passkey_exists})
 
 @login_required
 def change_password(request):
