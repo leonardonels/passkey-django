@@ -9,7 +9,7 @@ from mysite.settings import REPLYING_PARTY_ID, REPLYING_PARY_NAME, ORIGIN
 from django.http import JsonResponse
 import json, secrets, struct, base64
 from rest_framework.views import APIView
-from .models import Credential, TemporaryChallenge
+from .models import Credential, TemporaryChallenge, User_Verification
 from django.core.cache import cache
 from django.views.decorators.csrf import csrf_exempt
 from typing import List
@@ -73,6 +73,12 @@ def registration_verification(request):
         sign_counts=verification.sign_count,
     )
     new_credential.set_transports(credential.response.transports)
+    if not User_Verification.objects.filter(credential_id=new_credential.id).first():
+        User_Verification.objects.create(
+            value=True,
+            user=user,
+            credential=new_credential,
+        )
 
     return JsonResponse({"verified":True})
 
@@ -118,6 +124,8 @@ def verify_authentication(request):
 
         if not user_credential:
             raise Exception("User does not have credentials with give ID")
+
+        user_verification=User_Verification.objects.filter(user=user, credential_id=user_credential.id).last()
         
         verification=verify_authentication_response(
             credential=request_credential,
@@ -126,7 +134,7 @@ def verify_authentication(request):
             expected_origin=ORIGIN,
             credential_public_key=user_credential.public_key,
             credential_current_sign_count=user_credential.sign_counts,
-            require_user_verification=True,
+            require_user_verification=user_verification.value,
         )
     except Exception as err:
         return JsonResponse({"verified":False, "msg":str(err), "status":400})
@@ -137,6 +145,7 @@ def verify_authentication(request):
     login(request, verified_user)
     
     return JsonResponse({"verified":True})
+
 
 def remove_passkey(request):
     Credential.objects.filter(user=request.user).delete()
@@ -149,6 +158,7 @@ def login_with_passkey(request):
         request.session['username']=username
         return render(request, 'login_with_passkey.html')
     return redirect('/login/')
+
 
 def set_username_in_session(request):
     if request.method == 'POST':

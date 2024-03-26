@@ -43,3 +43,8 @@ class TemporaryChallenge(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.challenge}"
+    
+class User_Verification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='verification')
+    credential=models.ForeignKey(Credential, on_delete=models.CASCADE)
+    value = models.BooleanField(default=True)
