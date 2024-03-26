@@ -144,7 +144,11 @@ def remove_passkey(request):
 
 
 def login_with_passkey(request):
-    return render(request, 'login_with_passkey.html')
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        request.session['username']=username
+        return render(request, 'login_with_passkey.html')
+    return redirect('/login/')
 
 def set_username_in_session(request):
     if request.method == 'POST':

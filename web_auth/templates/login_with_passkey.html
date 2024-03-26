@@ -5,20 +5,11 @@
 {% block content %}
 <div class="justify-content-Start">
     <div class="col-3">
-        <div>
-          <form method="post">
-            {% csrf_token %}
-            <div class="mb-3">
-              <label for="username" class="form-label">Username</label>
-              <input type="text" class="form-control" id="username" name="username">
-            </div>
-            <div class="d-grid gap-2">
-                <button type="submit" id="passkey_login" class="btn btn-dark">Login with Passkey</button>
-            </div>
-            <div class="d-grid gap-2">
-                <a href='/login/'  type="button" class="btn btn-primary mt-3" onclick="window.history.back()">Back</a>
-            </div>
-          </form>
+        <div class="d-grid gap-2">
+            <button type="submit" id="passkey_login" class="btn btn-dark">Login with Passkey</button>
+        </div>
+        <div class="d-grid gap-2">
+            <a href='/login/'  type="button" class="btn btn-primary mt-3" onclick="window.history.back()">Back</a>
         </div>
     </div>
 </div>
