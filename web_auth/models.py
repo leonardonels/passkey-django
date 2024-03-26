@@ -1,7 +1,7 @@
 from django.db import models
 from users.models import User
 from webauthn.helpers.structs import AuthenticatorTransport
-import uuid, json, base64
+import json, base64
 
 # Create your models here.
 

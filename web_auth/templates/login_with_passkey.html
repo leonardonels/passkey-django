@@ -46,7 +46,7 @@
             
             // POST the response to the endpoint that calls
             // @simplewebauthn/server -> verifyAuthenticationResponse()
-            const verificationResp = await fetch('/web_auth/verify_authentication/', {
+            const verificationResp = await fetch('/web_auth/authentication_verification/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -60,10 +60,10 @@
             
             // Show UI appropriate for the `verified` status
             if (verificationJSON && verificationJSON.verified) {
-                console.log('Successo!');
+                console.log('Success!');
                 window.location.href = '/home';
             } else {
-                console.error('Qualcosa è andato storto!', verificationJSON);
+                console.error('Something went wrong!', verificationJSON);
             }
         });
     });
