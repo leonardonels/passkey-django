@@ -47,6 +47,7 @@ def change_username(request):
         form = UsernameChangeForm(instance=request.user, data={'username': request.user.username})
     return render(request, 'change_username.html', {'form': form})
 
+@login_required
 def delete_account(request):
     message=""
     if request.method == 'POST':
@@ -59,6 +60,7 @@ def delete_account(request):
     context={'message':message}
     return render(request, 'delete.html', context)
 
+@login_required
 def toggle_otp(request):
     if request.method == 'POST':
         user = request.user

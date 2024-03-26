@@ -11,7 +11,9 @@ import json, base64
 from .models import Credential, TemporaryChallenge, User_Verification
 from typing import List
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def registration(request):
 
     #get User informations
@@ -32,7 +34,7 @@ def registration(request):
 
     return JsonResponse(json.loads(options_to_json(options)))
 
-    
+@login_required
 def registration_verification(request):
 
     #get User informations
@@ -149,7 +151,7 @@ def authentication_verification(request):
     
     return JsonResponse({"verified":True})
 
-
+login_required
 def remove_passkey(request):
     Credential.objects.filter(user=request.user).delete()
     return redirect('/users/profile')
