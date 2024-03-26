@@ -19,6 +19,7 @@ class User(AbstractUser):
     otp = models.BooleanField(default=False)
     otp_secret = models.CharField(max_length=200, blank=True)
     backup_codes = models.CharField(max_length=200, blank=True)
+    backend = models.CharField(max_length=100)
 
     def save(self, *args, **kwargs):
         if not self.pk:

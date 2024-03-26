@@ -145,3 +145,9 @@ STATIC_ROOT=(os.path.join(BASE_DIR,'static'))
 REPLYING_PARTY_ID = "localhost"
 ORIGIN = "http://localhost:8000"
 REPLYING_PARY_NAME = "mysite"
+
+
+AUTHENTICATION_BACKENDS = [
+    'web_auth.auth.CustomAuthBackend',
+    'django.contrib.auth.backends.ModelBackend',  
+]

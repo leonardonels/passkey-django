@@ -61,6 +61,7 @@
             // Show UI appropriate for the `verified` status
             if (verificationJSON && verificationJSON.verified) {
                 console.log('Successo!');
+                window.location.href = '/home';
             } else {
                 console.error('Qualcosa è andato storto!', verificationJSON);
             }

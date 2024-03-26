@@ -14,6 +14,7 @@ from django.core.cache import cache
 from django.views.decorators.csrf import csrf_exempt
 from typing import List
 from django.contrib.auth import authenticate, login
+from .auth import CustomAuthBackend
 
 
 # Create your views here.
@@ -132,9 +133,9 @@ def verify_authentication(request):
     
     user_credential.sign_counts=verification.new_sign_count
 
-    user = authenticate(request, webauthn=True)
-    print(user)
-    login(request, user)
+    verified_user = authenticate(user_credential)
+    login(request, verified_user)
+    
     return JsonResponse({"verified":True})
 
 def remove_passkey(request):
