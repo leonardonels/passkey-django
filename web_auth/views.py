@@ -131,6 +131,10 @@ def verify_authentication(request):
         return JsonResponse({"verified":False, "msg":str(err), "status":400})
     
     user_credential.sign_counts=verification.new_sign_count
+
+    user = authenticate(request, webauthn=True)
+    print(user)
+    login(request, user)
     return JsonResponse({"verified":True})
 
 def remove_passkey(request):
@@ -154,16 +158,3 @@ def set_username_in_session(request):
             request.session.modified = True
             return JsonResponse({'success': True})
     return JsonResponse({'success': False}, status=400)
-
-def perform_webauthn_login(request):
-    #if request.user.is_authenticated:
-    #    return JsonResponse({"success": False, "message": "User is already authenticated"})
-
-    #SOLUZIONE TEMPORANEA, COSI NON ESISTE!!!
-    username = request.session['username']
-    user=get_object_or_404(User, username=username)
-    if user is not None:
-        login(request, user)
-        return JsonResponse({"success": True, "message": "Login successful"})
-    else:
-        return JsonResponse({"success": False, "message": "Login failed"})

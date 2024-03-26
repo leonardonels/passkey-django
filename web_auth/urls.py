@@ -11,5 +11,4 @@ urlpatterns = [
     path('remove_passkey/', remove_passkey, name='remove_passkey'),
     path('login_with_passkey/', login_with_passkey, name='login_with_passkey'),
     path('login_with_passkey/set_username/', set_username_in_session, name='set_username'),
-    path('perform_webauthn_login/', perform_webauthn_login, name='perform_webauthn_login'),
 ]
