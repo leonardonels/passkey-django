@@ -7,7 +7,6 @@ import uuid, json, base64
 
 class Credential(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='credentials')
-    id_bytes = models.BinaryField(unique=True, editable=False)
     credential_id = models.BinaryField()
     public_key = models.BinaryField()
     sign_counts = models.IntegerField()
@@ -36,11 +35,6 @@ class Credential(models.Model):
         return transports_enum_list
 
     transports_list = property(get_transports, set_transports)
-
-    def save(self, *args, **kwargs):
-        if not self.id_bytes:
-            self.id_bytes = uuid.uuid4().bytes
-        return super().save(*args, **kwargs)
     
 class TemporaryChallenge(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
