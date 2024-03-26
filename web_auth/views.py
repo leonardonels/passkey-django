@@ -13,6 +13,7 @@ from .models import Credential, TemporaryChallenge
 from django.core.cache import cache
 from django.views.decorators.csrf import csrf_exempt
 from typing import List
+from django.contrib.auth import authenticate, login
 
 
 # Create your views here.
@@ -89,10 +90,6 @@ def authentication(request):
             )
         )
 
-    for cred in user.credentials.all():
-        print("auth: ",type(cred.credential_id))
-        print("auth: ",cred.credential_id.hex())
-
     options=generate_authentication_options(
         rp_id=REPLYING_PARTY_ID,
         allow_credentials=allow_credentials,
@@ -106,23 +103,23 @@ def authentication(request):
 
 
 def verify_authentication(request):
+
     request_body=request.body.decode('utf-8')
-    data = json.loads(request_body)
-    username = data.get('username', None)
+    username = request.session['username']
     user=get_object_or_404(User, username=username)
     temp_challenge = TemporaryChallenge.objects.filter(user=user)
     challenge = base64.b64decode(temp_challenge.last().challenge.encode('utf-8'))
-    
+    temp_challenge.delete()
+
     try:
         request_credential=parse_authentication_credential_json(request_body)
-        user_credential = Credential.objects.filter(user_id=user.id, id=request_credential.raw_id).first()
-        print(user_credential)
+        user_credential = Credential.objects.filter(user_id=user.id, credential_id=request_credential.raw_id).first()
 
         if not user_credential:
             raise Exception("User does not have credentials with give ID")
         
         verification=verify_authentication_response(
-            Credential=request_credential,
+            credential=request_credential,
             expected_challenge=challenge,
             expected_rp_id=REPLYING_PARTY_ID,
             expected_origin=ORIGIN,
@@ -135,8 +132,6 @@ def verify_authentication(request):
     
     user_credential.sign_counts=verification.new_sign_count
     return JsonResponse({"verified":True})
-
-
 
 def remove_passkey(request):
     Credential.objects.filter(user=request.user).delete()
@@ -159,3 +154,16 @@ def set_username_in_session(request):
             request.session.modified = True
             return JsonResponse({'success': True})
     return JsonResponse({'success': False}, status=400)
+
+def perform_webauthn_login(request):
+    #if request.user.is_authenticated:
+    #    return JsonResponse({"success": False, "message": "User is already authenticated"})
+
+    #SOLUZIONE TEMPORANEA, COSI NON ESISTE!!!
+    username = request.session['username']
+    user=get_object_or_404(User, username=username)
+    if user is not None:
+        login(request, user)
+        return JsonResponse({"success": True, "message": "Login successful"})
+    else:
+        return JsonResponse({"success": False, "message": "Login failed"})

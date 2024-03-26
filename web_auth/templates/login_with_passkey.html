@@ -34,7 +34,6 @@
             // @simplewebauthn/server -> generateAuthenticationOptions()
             const resp = await fetch('/web_auth/authentication/');
             const options = await resp.json();
-            console.log('Authentication options received:', options);
             
             let asseResp;
             try {
@@ -62,7 +61,22 @@
             // Show UI appropriate for the `verified` status
             if (verificationJSON && verificationJSON.verified) {
                 console.log('Successo!');
-                window.location.reload();
+                const loginResp = await fetch('/web_auth/perform_webauthn_login/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                    body: JSON.stringify({}),
+                });
+
+                const loginJSON = await loginResp.json();
+
+                if (loginJSON.success) {
+                    window.location.href = '/home';
+                } else {
+                    console.error('Login failed:', loginJSON.message);
+                }
             } else {
                 console.error('Qualcosa è andato storto!', verificationJSON);
             }
