@@ -78,16 +78,20 @@ def registration_verification(request):
 def authentication(request):
     username = request.session['username']
     user=get_object_or_404(User, username=username)
-    allow_credentials: List[PublicKeyCredentialDescriptor] = []
 
+    allow_credentials: List[PublicKeyCredentialDescriptor] = []
     for cred in user.credentials.all():
         allow_credentials.append(
             PublicKeyCredentialDescriptor(
-                id=cred.id_bytes,
+                id=cred.credential_id,
                 type=PublicKeyCredentialType.PUBLIC_KEY,
                 transports=cred.get_transports()
             )
         )
+
+    for cred in user.credentials.all():
+        print("auth: ",type(cred.credential_id))
+        print("auth: ",cred.credential_id.hex())
 
     options=generate_authentication_options(
         rp_id=REPLYING_PARTY_ID,
@@ -96,21 +100,18 @@ def authentication(request):
 
     #create and save the challenge
     challenge = options.challenge
-    print(challenge)
     TemporaryChallenge.objects.create(user=user, challenge=base64.b64encode(challenge).decode('utf-8'))
 
     return JsonResponse(json.loads(options_to_json(options)))
 
 
-def authentication_verification(request):
+def verify_authentication(request):
     request_body=request.body.decode('utf-8')
     data = json.loads(request_body)
     username = data.get('username', None)
     user=get_object_or_404(User, username=username)
     temp_challenge = TemporaryChallenge.objects.filter(user=user)
     challenge = base64.b64decode(temp_challenge.last().challenge.encode('utf-8'))
-
-    print(challenge)
     
     try:
         request_credential=parse_authentication_credential_json(request_body)
