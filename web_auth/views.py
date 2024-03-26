@@ -9,7 +9,7 @@ from mysite.settings import REPLYING_PARTY_ID, REPLYING_PARY_NAME, ORIGIN
 from django.http import JsonResponse
 import json, secrets, struct, base64
 from rest_framework.views import APIView
-from .models import Credential
+from .models import Credential, TemporaryChallenge
 from django.core.cache import cache
 from django.views.decorators.csrf import csrf_exempt
 from typing import List
@@ -33,8 +33,8 @@ def registration(request):
     )
 
     #create and save the challenge
-    challenge=options.challenge
-    cache.set(f'challenge_{user.id}', challenge, timeout=300)
+    challenge = base64.b64encode(options.challenge).decode('utf-8')
+    TemporaryChallenge.objects.create(user=user, challenge=challenge)
 
     return JsonResponse(json.loads(options_to_json(options)))
 
@@ -48,12 +48,18 @@ def registration_verification(request):
     request_body=request.body.decode('utf-8')
     try:
         credential=parse_registration_credential_json(request_body)
-        verification=verify_registration_response(
-            credential=credential,
-            expected_challenge=cache.get(f'challenge_{user.id}'),
-            expected_rp_id=REPLYING_PARTY_ID,
-            expected_origin=ORIGIN,
-        )
+        temp_challenge = TemporaryChallenge.objects.filter(user=user)
+        challenge = base64.b64decode(temp_challenge.last().challenge.encode('utf-8'))
+
+        if temp_challenge is not None:
+            verification=verify_registration_response(
+                credential=credential,
+                expected_challenge=challenge,
+                expected_rp_id=REPLYING_PARTY_ID,
+                expected_origin=ORIGIN,
+            )
+            # Delete the temporary challenge from the database
+            temp_challenge.delete()
     except Exception as err:
         return JsonResponse({"verified":False, "msg":str(err), "status":400})
         
@@ -89,9 +95,9 @@ def authentication(request):
     )
 
     #create and save the challenge
-    challenge=options.challenge
-    cache.set(f'challenge', challenge, timeout=300)
-    print(cache.get(f'challenge_{user.id}'))
+    challenge = options.challenge
+    print(challenge)
+    TemporaryChallenge.objects.create(user=user, challenge=base64.b64encode(challenge).decode('utf-8'))
 
     return JsonResponse(json.loads(options_to_json(options)))
 
@@ -101,8 +107,10 @@ def authentication_verification(request):
     data = json.loads(request_body)
     username = data.get('username', None)
     user=get_object_or_404(User, username=username)
+    temp_challenge = TemporaryChallenge.objects.filter(user=user)
+    challenge = base64.b64decode(temp_challenge.last().challenge.encode('utf-8'))
 
-    #print(cache.get(f'challenge_{user.id}'))
+    print(challenge)
     
     try:
         request_credential=parse_authentication_credential_json(request_body)
@@ -114,7 +122,7 @@ def authentication_verification(request):
         
         verification=verify_authentication_response(
             Credential=request_credential,
-            expected_challenge=cache.get(f'challenge_{user.id}'),
+            expected_challenge=challenge,
             expected_rp_id=REPLYING_PARTY_ID,
             expected_origin=ORIGIN,
             credential_public_key=user_credential.public_key,

@@ -41,3 +41,11 @@ class Credential(models.Model):
         if not self.id_bytes:
             self.id_bytes = uuid.uuid4().bytes
         return super().save(*args, **kwargs)
+    
+class TemporaryChallenge(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    challenge = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.challenge}"
