@@ -14,6 +14,7 @@ class User(AbstractUser):
         VERIFIED="VERIFIED", 'verified'
 
     base_role=Role.ADMIN
+    base_backend='django.contrib.auth.backends.ModelBackend'
 
     role=models.CharField(max_length=50,choices=Role.choices)
     otp = models.BooleanField(default=False)
@@ -24,7 +25,17 @@ class User(AbstractUser):
     def save(self, *args, **kwargs):
         if not self.pk:
             self.role=self.base_role
+        if not self.backend:
+            self.backend=self.base_backend
         return super().save(*args, **kwargs)
+    
+    def set_custom_backend(self):
+        self.backend='web_auth.auth.CustomAuthBackend'
+        self.save()
+    
+    def reset_backend(self):
+        self.backend=self.base_backend
+        self.save()
     
     def is_superuser_custom(self):
         return self.role == 'ADMIN'

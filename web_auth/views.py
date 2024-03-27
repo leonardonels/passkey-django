@@ -75,6 +75,7 @@ def registration_verification(request):
             user=user,
             credential=new_credential,
         )
+    user.set_custom_backend()
 
     return JsonResponse({"verified":True})
 
@@ -153,7 +154,10 @@ def authentication_verification(request):
 
 login_required
 def remove_passkey(request):
-    Credential.objects.filter(user=request.user).delete()
+    if request.method == 'POST':
+        Credential.objects.filter(user=request.user).delete()
+        user=request.user
+        user.reset_backend()
     return redirect('/users/profile')
 
 

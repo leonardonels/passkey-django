@@ -47,8 +47,10 @@
             </div>
             <div class="p-1">
                 {% if passkey_exists %}
-                    {% csrf_token %}
-                    <a href="/web_auth/remove_passkey" type="submit" class="btn btn-danger">Remove Passkey</a>
+                    <form action="/web_auth/remove_passkey/" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Remove Passkey</button>
+                    </form>
                 {% else %}
                     <button id="addPasskeyBtn" class="btn btn-primary">Add a Passkey</button>
                 {% endif %}
