@@ -14,11 +14,11 @@
             {% csrf_token %}
             <div class="form-group">
                 <label for="username">Username:</label>
-                <input type="text" id="username" name="username" class="form-control">
+                <input type="text" id="username" name="username" class="form-control" autocomplete="username">
             </div>
             <div class="form-group">
                 <label for="password">Password:</label>
-                <input type="password" id="password" name="password" class="form-control">
+                <input type="password" id="password" name="password" class="form-control" autocomplete="current_password">
             </div>
             <div class="d-grid gap-2">
                 <button type="submit" class="btn btn-primary my-3">Login</button>
@@ -35,9 +35,13 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const loginWithPasskeyButton = document.getElementById('login-with-passkey');
-
+        
         loginWithPasskeyButton.addEventListener('click', function(event) {
             const username = document.getElementById('username').value;
+            if (username.trim() === '') {
+                alert("Username required for passkeys");
+                return;
+            }
 
             const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 

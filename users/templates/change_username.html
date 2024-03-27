@@ -3,11 +3,16 @@
 {% block title%} Change Username {% endblock %}
 
 {% block content %}
+
 <h2>Change Username</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.username.label_tag }}
-    {{ form.username }}
-    <button type="submit" class="btn btn-primary">Change Username</button>
-</form>
+<div class="col-3" style="max-width: 300px;">
+    <form method="post">
+        {% csrf_token %}
+        <label for="id_username">Username:</label>
+        <input type="text" name="username" value="{{ username }}" class="form-control" maxlength="150" required="" aria-describedby="id_username_helptext" id="id_username">
+        <div class="d-grid gap-2 mt-3">
+            <button type="submit" class="btn btn-primary">Change Username</button>
+        </div>
+    </form>
+</div>
 {% endblock %}
