@@ -7,11 +7,11 @@ from webauthn.helpers.parse_registration_credential_json import parse_registrati
 from webauthn.helpers.parse_authentication_credential_json import parse_authentication_credential_json
 from mysite.settings import REPLYING_PARTY_ID, REPLYING_PARY_NAME, ORIGIN
 from django.http import JsonResponse
-import json, base64
 from .models import Credential, TemporaryChallenge, User_Verification
 from typing import List
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+import json, base64
 
 @login_required
 def registration(request):
@@ -171,10 +171,16 @@ def login_with_passkey(request):
 
 def set_username_in_session(request):
     if request.method == 'POST':
-        request_data=json.loads(request.body)
-        username = request_data.get('username')
-        if username:
-            request.session['username'] = username
-            request.session.modified = True
-            return JsonResponse({'success': True})
-    return JsonResponse({'success': False}, status=400)
+        try:
+            request_data = json.loads(request.body)
+            username = request_data.get('username')
+            if username:
+                user = User.objects.get(username=username)
+                request.session['username'] = username
+                request.session.modified = True
+                return JsonResponse({'success': True})
+            else:
+                return JsonResponse({'success': False, 'error': 'Username is required'}, status=400)
+        except Exception:
+            return JsonResponse({'success': False, 'error': 'User not found'}, status=404)
+    return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=405)

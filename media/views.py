@@ -34,7 +34,7 @@ def portfolio(request):
         return render(request, 'portfolio.html', {'images': images})
     else:
         # Redirect to login page if the user is not authenticated
-        return redirect('login')
+        return redirect('/web_auth/login')
 
 def edit_image(request, image_id):
     image = get_object_or_404(image_link, id=image_id)
