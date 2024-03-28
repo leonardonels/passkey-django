@@ -1,12 +1,10 @@
-asgiref==3.8.0
+asgiref==3.8.1
 asn1crypto==1.5.1
 cbor2==5.6.2
 cffi==1.16.0
 cryptography==42.0.5
 Django==5.0.3
 django-crispy-forms==2.1
-django-sslserver-v2==1.0
-djangorestframework==3.15.1
 pycparser==2.21
 pyOpenSSL==24.1.0
 pyotp==2.9.0
