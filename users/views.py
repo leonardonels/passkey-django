@@ -45,7 +45,7 @@ def change_username(request):
             return redirect('/users/profile')
     else:
         form = UsernameChangeForm(instance=request.user, data={'username': request.user.username})
-    return render(request, 'change_username.html', {'form': form, 'username': request.session['username']})
+    return render(request, 'change_username.html', {'form': form, 'username': request.user.username})
 
 @login_required
 def delete_account(request):

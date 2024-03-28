@@ -13,15 +13,29 @@
         <h4>Account Details</h4>
         <div class="d-flex justify-content-between">
             <div>
-                <a href="/users/profile/change_username/" class="btn btn-primary">Change Username</a>
-                <a href="/users/profile/change_password/" class="btn btn-primary">Change Password</a>
-                <a href="/users/profile/delete/" class="btn btn-danger">Delete Account</a>
+                <form action="{% url 'users:change_username' %}" method="get" style="display: inline-block;" clss="mt-3">
+                        <button type="submit" class="btn btn-primary">
+                            Change Username
+                        </button>
+                </form>
+                <form action="{% url 'users:change_password' %}" method="get" style="display: inline-block;" clss="mt-3">
+                        <button type="submit" class="btn btn-primary">
+                            Change Password
+                        </button>
+                </form>
             </div>
             <div>
                 {% if request.user.is_admin %}
-                    <a href="/admin" class="btn btn-warning">Admin</a>
+                <a href="/admin" class="btn btn-warning">Admin</a>
                 {% endif %}
             </div>
+        </div>
+        <div class="mt-2">
+            <form action="{% url 'users:delete_account' %}" method="get" style="display: inline-block;" clss="mt-3">
+                <button type="submit" class="btn btn-danger">
+                    Delete Account
+                </button>
+            </form>
         </div>
     </div>
 
