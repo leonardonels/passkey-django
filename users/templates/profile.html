@@ -11,7 +11,7 @@
 
     <div class="container mt-5">
         <h4>Account Details</h4>
-        <div class="d-flex justify-content-between">
+        <div>
             <div>
                 <form action="{% url 'users:change_username' %}" method="get" style="display: inline-block;" clss="mt-3">
                         <button type="submit" class="btn btn-primary">
@@ -24,18 +24,22 @@
                         </button>
                 </form>
             </div>
-            <div>
-                {% if request.user.is_admin %}
-                <a href="/admin" class="btn btn-warning">Admin</a>
-                {% endif %}
-            </div>
         </div>
         <div class="mt-2">
-            <form action="{% url 'users:delete_account' %}" method="get" style="display: inline-block;" clss="mt-3">
-                <button type="submit" class="btn btn-danger">
-                    Delete Account
-                </button>
-            </form>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <form action="{% url 'users:delete_account' %}" method="get" style="display: inline-block;" clss="mt-3">
+                        <button type="submit" class="btn btn-danger">
+                            Delete Account
+                        </button>
+                    </form>
+                </div>
+                <div>
+                    {% if request.user.is_admin %}
+                    <a href="/admin" class="btn btn-warning">Admin</a>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
 
