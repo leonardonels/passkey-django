@@ -33,30 +33,37 @@
 </div>
 
 <script>
+
+    //importazione di startAuthentication dalla libreria SimpleWebAuthnBrowser
     const { startAuthentication } = SimpleWebAuthnBrowser;
     
+    //estrazione del valore di un cookie dato il suo nome
     function getCookie(name) {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
         if (parts.length === 2) return parts.pop().split(';').shift();
     }
     
-    // <button>
+    //riferimento al pulsante login-with-passkey
     const elemBegin = document.getElementById('login-with-passkey');
+    //si attende il caricamento completo del DOM per aggiungere un event listener al bottone di registrazione
     document.addEventListener("DOMContentLoaded", function() {
 
-        // Start authentication when the user clicks a button
+        //inizio della procedura di autenticazione al click del pulsante login-with-passkey
         elemBegin.addEventListener('click', async () => {
 
+            //recupero dell'username e verifica che non sia vuoto,
+            //se vuoto si mostra un messaggio di errore (alert)
             const username = document.getElementById('username').value;
             if (username.trim() === '') {
                 alert("Username required for passkeys");
                 return;
             };
+
+            //invio dell'username al server per impostarlo come utente corrente
             const postData = {
                 username: username
             };
-            
             const userResp = await fetch('/web_auth/login_with_passkey/set_username/', {
                 method: 'POST',
                 headers: {
@@ -73,22 +80,20 @@
                 return;
             }
             
-            // GET authentication options from the endpoint that calls
-            // @simplewebauthn/server -> generateAuthenticationOptions()
+            //ottenimento delle opzioni di autenticazione dal server con metodo GET
             const resp = await fetch('/web_auth/authentication/');
             const options = await resp.json();
             
+            //invio delle opzioni all'autenticatore e si attende la risposta
             let asseResp;
             try {
-                // Pass the options to the authenticator and wait for a response
                 asseResp = await startAuthentication(await options);
             } catch (error) {
-                // Some basic error handling
+                //in caso di errore, viene lanciata un'eccezione
                 throw error;
             }
             
-            // POST the response to the endpoint that calls
-            // @simplewebauthn/server -> verifyAuthenticationResponse()
+            //invio della risposta dell'autenticatore al server tramite motodo POST
             const verificationResp = await fetch('/web_auth/authentication_verification/', {
                 method: 'POST',
                 headers: {
@@ -98,10 +103,10 @@
                 body: JSON.stringify(asseResp),
             });
             
-            // Wait for the results of verification
+            //attesa del risultato per la verifica
             const verificationJSON = await verificationResp.json();
             
-            // Show UI appropriate for the `verified` status
+            //gestione del risultato della verifica
             if (verificationJSON && verificationJSON.verified) {
                 console.log('Success!');
                 window.location.href = '/home';
@@ -110,39 +115,6 @@
             }
         });
     });
-
-//    document.addEventListener("DOMContentLoaded", function() {
-//        const loginWithPasskeyButton = document.getElementById('login-with-passkey');
-//        
-//        loginWithPasskeyButton.addEventListener('click', function(event) {
-//            const username = document.getElementById('username').value;
-//            if (username.trim() === '') {
-//                alert("Username required for passkeys");
-//                return;
-//            }
-//
-//            const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
-//
-//            const form = document.createElement('form');
-//            form.method = 'POST';
-//            form.action = '/web_auth/login_with_passkey/';
-//
-//            const inputUsername = document.createElement('input');
-//            inputUsername.type = 'hidden';
-//            inputUsername.name = 'username';
-//            inputUsername.value = username;
-//            form.appendChild(inputUsername);
-//
-//            const inputCsrfToken = document.createElement('input');
-//            inputCsrfToken.type = 'hidden';
-//            inputCsrfToken.name = 'csrfmiddlewaretoken';
-//            inputCsrfToken.value = csrfToken;
-//            form.appendChild(inputCsrfToken);
-//
-//            document.body.appendChild(form);
-//            form.submit();
-//        });
-//    });
 </script>
 
 {% endblock %}

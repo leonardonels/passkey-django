@@ -81,36 +81,38 @@
 
 {% if not passkey_exists %}
 <script>
+
+    //importazione di startRegistration dalla libreria SimpleWebAuthnBrowser
     const { startRegistration } = SimpleWebAuthnBrowser;
 
+    //estrazione del valore di un cookie dato il suo nome
     function getCookie(name) {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
         if (parts.length === 2) return parts.pop().split(';').shift();
     }
 
-    // <button>
+    //riferimento al bottone di registrazione addPasskeyBtn
     const elemBegin = document.getElementById('addPasskeyBtn');
+    //si attende il caricamento completo del DOM per aggiungere un event listener al bottone di registrazione
     document.addEventListener("DOMContentLoaded", function() {
 
-        // Start registration when the user clicks a button
+        //inizio della registrazione di una passkey al click del bottone addPasskeyBtn
         elemBegin.addEventListener('click', async () => {
 
-          // GET registration options from the endpoint that calls
-          // @simplewebauthn/server -> generateRegistrationOptions()
+          //Si richiedono le opzioni di registrazione dal server, che genererà le opzioni usando generateRegistrationOptions().
           const resp = await fetch('/web_auth/registration/');
 
+          //le opzioni di registrazione vengono passate all'autenticatore tramite startRegistration
+          //si attende la risposta, in caso di errore, viene lanciata un'eccezione
           let attResp;
           try {
-            // Pass the options to the authenticator and wait for a response
             attResp = await startRegistration(await resp.json());
           } catch (error) {
-            // Some basic error handling
             throw error;
           }
 
-          // POST the response to the endpoint that calls
-          // @simplewebauthn/server -> verifyRegistrationResponse()
+          //la risposta dell'autenticatore viene inviata al server per la verifica, che utilizza verifyRegistrationResponse()
           const verificationResp = await fetch('/web_auth/registration_verification/', {
             method: 'POST',
             headers: {
@@ -120,10 +122,11 @@
             body: JSON.stringify(attResp),
           });
 
-          // Wait for the results of verification
+          //attesa del risultato della verifica
           const verificationJSON = await verificationResp.json();
 
-          // Show UI appropriate for the `verified` status
+          //se la verifica è andata a buon fine, la pagina viene ricaricata per riflettere lo stato aggiornato. 
+          //altrimenti, viene mostrato un messaggio di errore.
           if (verificationJSON && verificationJSON.verified) {
             console.log('Success!');
             window.location.reload();
