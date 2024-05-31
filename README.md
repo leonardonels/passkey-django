@@ -1,6 +1,6 @@
 # Passkey-Django
 
-This is my thesis project.
+This is my computer engineer thesis project.
 
 ## Overview
 
