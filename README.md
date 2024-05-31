@@ -1,17 +1,27 @@
-# mysite
+# Passkey-Django
+
+This is my thesis project.
+
+## Overview
+
+This project is a web application built with Django. It provides a platform for managing user authentication and authorization using passkeys.
+
+## Installation
 
 WARNING: Passkey sign-up is not implemented yet so to use passkey create a profile with username and password first. From there you can test otp functionality as well as passkeys.
 
-    To test it by yourself:
-      1. clone this repository
-      2. highly suggested to create a virtuale enviroment, 'pipenv' was used during developement
-      3. if you have decided to use pipenv enter the virtual enviroment
+1. clone this repository
+2. highly suggested to create a virtuale enviroment, 'pipenv' was used during developement
+3. if you have decided to use pipenv enter the virtual enviroment
          $ pipenv shell
-      4. install all required packages, they are stored in the requirements.txt file
+4. install all required packages, they are stored in the requirements.txt file
          $ pip install -r requirements.txt
-      5. start the server
+   
+## Usage
+
+1. start the server
          $ python manage.py runserver
-      6. to test it go to http://localhost:8000
+2. to test it go to http://localhost:8000
          i know that tecnically localhost:8000 and 127.0.0.1:8000 are almost the same, 
          but localhost is recognised as a trusted source, 127.0.0.1:8000 is not and webauth features would not work
 
