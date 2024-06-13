@@ -89,7 +89,10 @@ def setup_otp(request):
             # base64 base64 encoding of QR image
             qr_base64 = base64.b64encode(buffer.getvalue()).decode()
             
-            return render(request, 'setup_otp.html', {'qr_base64': qr_base64, 'otp_secret': user.decrypt_otp_secret(user.otp_secret), 'backup_codes': user.decrypt_backup_codes(user.backup_codes)})
+            return render(request, 'setup_otp.html', {'qr_base64': qr_base64, 
+                                                      'otp_secret': user.decrypt_otp_secret(user.otp_secret), 
+                                                      'backup_codes': user.decrypt_backup_codes(user.backup_codes)
+                                                     })
         else:
             print("non user")
     else:
